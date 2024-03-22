@@ -18,5 +18,5 @@ USER 1024
 
 WORKDIR /home/node
 
-COPY get_poky.sh add_layer.sh build.sh run.sh entry.sh yadro_hello.c compile_instr.txt ./
+COPY mode_selection.sh get_poky.sh add_layer.sh build.sh run.sh entry.sh yadro_hello.c compile_instr.txt ./
 CMD source entry.sh
