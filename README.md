@@ -40,4 +40,5 @@
 1) Выполнить скрипт get_poky.sh с помощью source в папке репозитория, скрипт склонирует репозиторией и создаст локальную ветку с poky версии
 kirkstone
 2) Создать образ для Docker: docker build -t poky_image .
-3) Запустить сборку проекта Poky: docker run -v ./poky:/home/node/poky --name poky_build --rm poky_image
+3) Запустить сборку проекта Poky: "docker run -e mode=build --name poky_cont --rm -v ./poky:/home/node/poky poky_image", режим сборки выбирать
+   изменением параметра mode на build - режим сборки, run - режим запуска.
