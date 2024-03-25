@@ -36,8 +36,9 @@
   - CMD source entry.sh - для начала сборки проекта
 
 Инструкция по воспроизведению ========================
-1) Выполнить скрипт get_poky.sh с помощью source в папке репозитория, скрипт склонирует репозиторией и создаст локальную ветку с poky версии
+1) Склонировать данный репозиторий
+2) Выполнить скрипт get_poky.sh с помощью source в папке репозитория, скрипт склонирует репозиторией и создаст локальную ветку с poky версии
 kirkstone
-2) Создать образ для Docker: docker build -t poky_image .
-3) Запустить сборку проекта Poky: "docker run -e mode=build --name poky_cont --rm -v ./poky:/home/node/poky poky_image", режим сборки выбирать
+3) Создать образ для Docker: docker build -t poky_image .
+4) Запустить сборку проекта Poky: "docker run -e mode=build --name poky_cont --rm -v ./poky:/home/node/poky poky_image", режим сборки выбирать
    изменением параметра mode на build - режим сборки, run - режим запуска образа в QEMU.
