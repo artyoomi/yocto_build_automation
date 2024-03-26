@@ -14,7 +14,7 @@ RUN apt update && \
 
 RUN groupadd --gid 1024 node \
     && adduser --uid 1024 --disabled-password --gecos "" --ingroup node node --home /home/node
-#RUN mkdir /home/node/poky && chown node:node /home/node/poky/ && chmod g+s /home/node/poky/ && chmod 0777 /home/node/poky
+RUN mkdir /home/node/poky # && chown node:node /home/node/poky/ && chmod g+s /home/node/poky/ && chmod 0777 /home/node/poky
 USER node
 
 WORKDIR /home/node
