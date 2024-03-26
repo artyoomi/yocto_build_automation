@@ -13,10 +13,11 @@ RUN apt update && \
     locale-gen en_US.UTF-8
 
 RUN groupadd --gid 1024 node \
-    && adduser --uid 1024 --disabled-password --gecos "" --force-badname --ingroup node node --home /home/node
-USER 1024
+    && adduser --uid 1024 --disabled-password --gecos "" --ingroup node node --home /home/node
+#RUN mkdir /home/node/poky && chown node:node /home/node/poky/ && chmod g+s /home/node/poky/ && chmod 0777 /home/node/poky
+USER node
 
 WORKDIR /home/node
 
-COPY mode_selection.sh get_poky.sh add_layer.sh entry.sh yadro_hello.c compile_instr.txt ./
+COPY --chown=node:node mode_selection.sh add_layer.sh entry.sh yadro_hello.c compile_instr.txt ./
 CMD source entry.sh
