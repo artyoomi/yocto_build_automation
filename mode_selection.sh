@@ -3,7 +3,7 @@
 if [ "$mode" = "run" ]; then
 	echo "Running poky build..."
 	cd poky/build
-	runqemu qemux86 ramfs slirp nographic
+	runqemu qemux86-64 ramfs slirp nographic
 elif [ "$mode" = "build" ]; then
 	echo "Build option was chosen"
 	if ! [ -d poky/build ]; then
