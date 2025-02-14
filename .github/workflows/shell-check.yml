@@ -3,12 +3,12 @@ name: "Trigger: Push action"
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - '**.sh'
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   shellcheck:
