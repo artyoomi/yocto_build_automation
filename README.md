@@ -1,55 +1,155 @@
-## Poky build automation
+## Yocto Build Automation
 
-This project is selection assignment for the "Yadro" laboratory at ETU "LETI" University
+This project is selection assignment for the "Yadro" laboratory at ETU "LETI" university.
+
+### Usage
+```sh
+# Get poky and switch to kirkstone branch
+git clone https://github.com/yoctoproject/poky -b kirkstone
+
+# Build and run container
+docker build -t yocto_automation .
+docker run -it -v ./poky:/home/builder/poky yocto_automation [build | run | bash]
+```
 
 ### Task 
-Необходимо реализовать скрипты и инструкции для построения образа ОС (rootfs) в соответствии со следующими пунктами:
-1. Познакомиться с Yocto Project: https://www.yoctoproject.org/. Разобраться, как настроить окружение для сборки Yocto (дистрибутив Poky). Собрать простейший образ (цель core-image-minimal). Убедиться, что он запускается в QEMU. Используйте версию Yocto: Kirkstone.
-2. Реализовать автоматизацию сборки через Docker. В контейнере необходимо реализовать сборку образа и запуск образа в QEMU. Выбор между сборкой и запуском необходимо реализовать через аргументы, передаваемые контейнеру при запуске. Лучше всего использовать docker volume, чтобы собирать все исходные файлы в директории на хост-машине (то есть, загрузка и сборка образа осуществляется в docker volume). В качестве базового Docker образа используйте: ubuntu:20.04. 
-3. Добавить в образ программу yadro_hello. Программа должна выводить в поток стандартного вывода строку “Hello from my own program!”. Программа должна быть написана на языке C. Добавление программы необходимо осуществить посредством создания слоя Yocto.
+It is necessary to implement scripts and instructions for building an OS image (rootfs) in accordance with the following points:
+1. Get to know the Yocto Project: https://www.yoctoproject.org/.
+Figure out how to set up the environment for building Yocto (Poky distribution).
+Assemble the simplest image (the goal is core-image-minimal). Make sure that it
+runs in QEMU. Use the Yocto version: Kirkstone.
+2. Implement build automation via Docker. In the container, it is necessary
+to implement image assembly and image launch in QEMU. Choosing between assembly and
+before launching, it must be implemented through arguments passed to the container
+at startup. It is best to use docker volume to collect all the source
+files in a directory on the host machine (that is, the image is downloaded and assembled in
+docker volume). Use: ubuntu as the base Docker image.:04/20.
+3. Add the yadro_hello program to the image. The program should output the
+string “Hello from my own program!” to the standard output stream. The program must be
+written in C. The program must be added by creating a Yocto layer.
  
-Требования к выполнению задания:
-- Сборка образа ОС и запуск виртуальной машины QEMU должны запускаться внутри Docker-контейнера
-- Нобходимо создать свой репозиторий для данного задания. Репозиторий должен содержать файлы исходного кода, dockerfile, скрипты для сборки и запуска задания и инструкцию для запуска и сборки
-- Для каждого пункта заданий должна быть инструкция по тому, как оно реализовано, и команда для воспроизведения
+Requirements for completing the task:
+- Build the OS image and run the QEMU VM inside the Docker container.
+- You need to create your own repository for this task. The repository should contain
+the source code files, dockerfile, scripts for building and running the job, and instructions
+for starting and building
+- For each task item, there should be an instruction on how
+it is implemented and a command to reproduce it.
 
-### Results
-1) Успешно разобрался с тем как собрать минимальной образ на своей хост машине, образ был успешно запущен в QEMU.
-2) На данный момент происходит сборка, но после сборки образ почему-то не запускается в QEMU. Кроме того сохранение полученной
-   сборки возможно только если выставить для директории с исходными данными права 777.
-4) Реализовал добавление слоя через скрипты bitbake.
+### Description
 
-Всё та же проблема с правами доступа, пока нашёл обходной путь через chmod 777 poky, но данное решение далеко от хорошего,
-пробовал монтировать в контейнер файлы, содержащие группы и пользователей с хост-машины. Однако при попытке такого монтирова-
-ния появляется ошибка о том, что заданный пользователь не может быть найден.
-Команда: docker run -e mode=build --name poky_cont --rm -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro --user $(whoami) 
--v $(pwd)/poky:/poky poky_image
-Ошибка: docker: Error response from daemon: unable to find user artyom: no matching entries in passwd file.
+#### Structure of Dockerfile
+0. Initialize some needed data
+   ```Dockerfile
+   FROM ubuntu:20.04
 
-Файлы, необходимые для решения задачи ========================
-- get_poky.sh:
-  Скрипт для клонирования репозитория дистрибутива Poky и создания локальной ветки версии kirkstone
-- add_layer.sh:
-  Скрипт для создания слоя Poky, инициализирует среду сборки, создаёт слой и помещает исходный код программы yadro_hello.c
-  в папку с рецептом сборки. Вместе с ним идёт файл compile_instr.txt, который содержит инструкции для bitbake, с помощью которых
-  программа yadro_hello.c компилируется
-- mode_selection.sh:
-  Файл, необходимый для выбора режима запуска контейнера.
-- Dockerfile:
-  - FROM ubuntu:20.04 - сборка на базовом образе ubuntu версии 20.04
-  - RUN apt update && DEBIAN_FRONTEND=noninteractive ... - обновление репозитория и установка необходимых зависимостей,
-    переменная окружения DEBIAN_FRONTEND=noninteractive используется для отключения интерактивного выбора при установе
-  - RUN groupadd -gid ... - добавления новой группы с id 1024 и пользователя в этой группе, создание папки пользователя node
-  - USER 1024 - переключение на пользователя с id 1024. Новый пользователь нужен так как bitbake не выполняет сборку от
-  - пользователя root.
-  - WORKDIR /home/node - использование созданной директории пользователя для сборки проекта
-  - COPY mode_selection.sh ... - для копирования необходимых для сборки скриптов в контейнер
-  - CMD bash mode_selection.sh.sh - для начала сборки проекта
+   ARG USERNAME=builder
+   ARG APP_DIR=/home/$USERNAME
 
-Инструкция по воспроизведению ========================
-1) Склонировать данный репозиторий
-2) Выполнить скрипт get_poky.sh с помощью source в папке репозитория, скрипт склонирует репозиторией и создаст локальную ветку с poky версии
-kirkstone и изменить права доступа к папке на 777, т.е. чтение, запись и исполнение для всех.
-3) Создать образ для Docker: docker build -t poky_image .
-4) Запустить сборку проекта Poky: "docker run -e mode=build --name poky_cont --rm -v \$(pwd)/poky:/home/node/poky poky_image", режим сборки выбирать
-   изменением параметра mode на build - режим сборки, run - режим запуска образа в QEMU.
+   WORKDIR $APP_DIR
+   ```
+
+1. Install the necessary dependencies for the build, as described [here](https://docs.yoctoproject.org/brief-yoctoprojectqs/index.html)
+   ```Dockerfile
+   RUN apt update && \
+       DEBIAN_FRONTEND=noninteractive \
+       apt install -y build-essential \
+                      chrpath \
+                      cpio \
+                      debianutils \
+                      diffstat \
+                      file \
+                      gawk \
+                      gcc \
+                      git \
+                      iputils-ping \
+                      libacl1 \
+                      liblz4-tool \
+                      locales \
+                      python3 \
+                      python3-git \
+                      python3-jinja2 \
+                      python3-pexpect \
+                      python3-pip \
+                      python3-subunit \
+                      socat \
+                      texinfo \
+                      unzip \
+                      wget \
+                      xz-utils \
+                      zstd
+   ```
+   
+2. Generate ```en_US.UTF-8``` locale
+   ```Dockerfile
+   RUN locale-gen en_US.UTF-8
+   ```
+   
+4. Add new user with sudo rights
+   ```Dockerfile
+   RUN useradd -m $USERNAME && \
+       apt install -y sudo && \
+       usermod -aG sudo $USERNAME && \
+       touch /etc/sudoers.d/${USERNAME}-nopasswd && \
+       echo ${USERNAME} ALL=\(ALL\) NOPASSWD: ALL > /etc/sudoers.d/${USERNAME}-nopasswd && \
+       chown $USERNAME:$USERNAME /home/$USERNAME
+   ```
+   
+5. Switch to new user with
+   ```Dockerfile
+   USER ${USERNAME}
+   ```
+   
+   
+7. Copy necessary files in container
+   ```Dockerfile
+   COPY .env .
+   COPY layers/ layers/
+   COPY scripts/*.sh scripts/
+   ```
+
+8. Start *run_yocto.sh* script to provide selection between: build, run, bash
+   ```Dockerfile
+   ENTRYPOINT [ "bash", "scripts/run_yocto.sh" ]
+   ```
+   
+   - *build*: to build image
+     ```sh
+     echo "Start building..."
+     source oe-init-build-env
+
+     # Add custom layer with add_layer.sh
+     if ! [ -d "${PROJECT_DIR}/poky/meta-custom/" ]; then
+     	echo ""
+     	echo "Adding meta-custom layer..."
+     	"${PROJECT_DIR}/scripts/add_layer.sh"
+     	echo "meta-custom layer was succesfully added!"
+     	echo "yadro-hello package was added to local.conf"
+     	echo ""
+	 fi
+
+	 # Build core-image-minimal and yadro-hello (in a different way, yadro-hello can be added with IMAGE_INSTALL)
+	 bitbake core-image-minimal
+	 bitbake yadro-hello
+     ```
+
+   - *run*: check that image was already builded and try to run it
+     ```sh
+     if [ -d "build/tmp/deploy/images/qemux86-64" ]; then
+	 	echo "Trying to run poky in qemu..."
+	 	source oe-init-build-env build
+
+     	# "slirp" used to enable different way of networking and "nographic" to disable video console.
+ 	 	runqemu "slirp" "nographic"
+	 else
+	 	echo "Image for qemux86-64 was not build, build it with \"build\" option!!!"
+	 fi
+     ```
+
+   - *bash*: bash session to view container files
+
+#### Adding new layer
+To add new layer in image implemented add_layer.sh script from the scripts folder.
+The logic of the script:
+- Copy all layer files to poky directory (layer files is: .bb and .c file)
+- Add new layer in bbconfig.conf with ```bitbake-layers add-layer```
