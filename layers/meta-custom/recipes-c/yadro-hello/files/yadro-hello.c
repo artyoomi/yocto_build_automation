@@ -1,7 +1,8 @@
 #include <stdio.h>
 
-int main()
+int main(void)
 {
 	printf("Hello from my own program!\n");
+
 	return 0;
 }
