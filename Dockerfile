@@ -1,11 +1,8 @@
-# Build poky core-image-minimal and start it in qemu is specified
+# Build poky core-image-minimal and start it in qemu if specified
 
 FROM ubuntu:20.04
 
-ARG USERNAME=builder
-ARG APP_DIR=/home/$USERNAME
-
-WORKDIR $APP_DIR
+ARG USERNAME=yocto
 
 # Update list of available packages and install all dependencies
 RUN apt update && \
@@ -49,6 +46,7 @@ RUN useradd -m $USERNAME && \
 
 # Specify user to work
 USER ${USERNAME}
+WORKDIR /home/${USERNAME}
 
 # Copy all necessary files in container
 COPY .env .

@@ -8,8 +8,8 @@ This project is selection assignment for the "Yadro" laboratory at ETU "LETI" un
 git clone https://github.com/yoctoproject/poky -b kirkstone
 
 # Build and run container
-docker build -t yocto_automation .
-docker run -it -v ./poky:/home/builder/poky yocto_automation [build | run | bash]
+docker build -t yocto-builder .
+docker run -it --user $(id -u):$(id -g) -v $(pwd)/poky:/home/yocto/poky yocto-builder run
 ```
 
 ### Task 
