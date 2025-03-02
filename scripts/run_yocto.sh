@@ -6,9 +6,7 @@ set -e
 # Export necessary environment variables
 source .env
 
-cd "${PROJECT_DIR}"
-
-cd poky
+cd "${PROJECT_DIR}"/poky
 
 if [ "$1" == "run" ]; then
   if [ -d "build/tmp/deploy/images/qemux86-64" ]; then
