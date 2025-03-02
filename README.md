@@ -13,22 +13,22 @@ docker run -it --user $(id -u):$(id -g) -v $(pwd)/poky:/home/yocto/poky yocto-bu
 ```
 
 ### Task 
-It is necessary to implement scripts and instructions for building an OS image (rootfs) in accordance with the following points:
+#### It is necessary to implement scripts and instructions for building an OS image (rootfs) in accordance with the following points
 1. Get to know the Yocto Project: https://www.yoctoproject.org/.
-Figure out how to set up the environment for building Yocto (Poky distribution).
-Assemble the simplest image (the goal is core-image-minimal). Make sure that it
-runs in QEMU. Use the Yocto version: Kirkstone.
+Figure out how to set up the environment for building Yocto (poky distribution).
+Assemble the simplest image (the goal is **core-image-minimal**). Make sure that it
+runs in QEMU. Use the Yocto version: *Kirkstone*.
 2. Implement build automation via Docker. In the container, it is necessary
 to implement image assembly and image launch in QEMU. Choosing between assembly and
-before launching, it must be implemented through arguments passed to the container
-at startup. It is best to use docker volume to collect all the source
+launching must be implemented through arguments passed to the container
+at startup. It is best to use *docker volume* to collect all the source
 files in a directory on the host machine (that is, the image is downloaded and assembled in
-docker volume). Use: ubuntu as the base Docker image.:04/20.
+docker volume). Use ```ubuntu:20.04``` as the base Docker image.
 3. Add the yadro_hello program to the image. The program should output the
 string “Hello from my own program!” to the standard output stream. The program must be
 written in C. The program must be added by creating a Yocto layer.
  
-Requirements for completing the task:
+#### Requirements for completing the task:
 - Build the OS image and run the QEMU VM inside the Docker container.
 - You need to create your own repository for this task. The repository should contain
 the source code files, dockerfile, scripts for building and running the job, and instructions
@@ -149,7 +149,7 @@ it is implemented and a command to reproduce it.
    - *bash*: bash session to view container files
 
 #### Adding new layer
-To add new layer in image implemented add_layer.sh script from the scripts folder.
+To add new layer in image implemented ```add_layer.sh``` script from the scripts folder.
 The logic of the script:
-- Copy all layer files to poky directory (layer files is: .bb and .c file)
+- Copy layer folder to poky directory
 - Add new layer in bbconfig.conf with ```bitbake-layers add-layer```
