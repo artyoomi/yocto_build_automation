@@ -1,24 +1,17 @@
 #!/bin/bash
-
-# To exit from script when error occured
 set -e
 
-# Export necessary environment variables
-source .env
-
-cd "${PROJECT_DIR}"/poky
-
 if [ "$1" == "run" ]; then
-  if [ -d "build/tmp/deploy/images/qemux86-64" ]; then
-	  echo "Trying to run poky in qemu..."
-	  source oe-init-build-env build
- 		runqemu "slirp" "nographic"
+  	if [ -d "$PROJECT_DIR/poky/build/tmp/deploy/images/qemux86-64" ]; then
+		echo "Trying to run poky in qemu..."
+		source "$PROJECT_DIR/poky/oe-init-build-env" "$PROJECT_DIR/poky/build"
+ 		"$PROJECT_DIR/poky/scripts/runqemu" "slirp" "nographic"
 	else
-	  echo "Image for qemux86-64 was not build, build it with \"build\" option!!!"
+		echo "Image for qemux86-64 was not build, build it with \"build\" option!!!"
 	fi
 elif [ "$1" == "build" ]; then
 	echo "Start building..."
-	source oe-init-build-env
+	source "$PROJECT_DIR/poky/oe-init-build-env" "$PROJECT_DIR/poky/build"
 
 	# Add meta-custom if not added
 	if ! [ -d "${PROJECT_DIR}/poky/meta-custom/" ]; then
@@ -29,7 +22,6 @@ elif [ "$1" == "build" ]; then
 		echo "yadro-hello package was added to local.conf"
 		echo ""
 	fi
-
 	bitbake core-image-minimal
 	bitbake yadro-hello
 elif [ "$1" == "bash" ]; then

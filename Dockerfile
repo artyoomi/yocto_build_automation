@@ -1,8 +1,4 @@
-# Build poky core-image-minimal and start it in qemu if specified
-
 FROM ubuntu:20.04
-
-ARG USERNAME=yocto
 
 # Update list of available packages and install all dependencies
 RUN apt update && \
@@ -36,22 +32,24 @@ RUN apt update && \
 # Set locale for build
 RUN locale-gen en_US.UTF-8
 
+# ARG USERNAME=builder
+
+ENV PROJECT_DIR=/yocto
+
+# [NOTE] To review
 # Add new sudo user to container
-RUN useradd -m $USERNAME && \
-    apt install -y sudo && \
-    usermod -aG sudo $USERNAME && \
-    touch /etc/sudoers.d/${USERNAME}-nopasswd && \
-    echo ${USERNAME} ALL=\(ALL\) NOPASSWD: ALL > /etc/sudoers.d/${USERNAME}-nopasswd && \
-    chown $USERNAME:$USERNAME /home/$USERNAME
+# RUN useradd -m $USERNAME && \
+#     apt install -y sudo && \
+#     usermod -aG sudo $USERNAME && \
+#     touch /etc/sudoers.d/${USERNAME}-nopasswd && \
+#     echo ${USERNAME} ALL=\(ALL\) NOPASSWD: ALL > /etc/sudoers.d/${USERNAME}-nopasswd && \
+#     chown $USERNAME:$USERNAME /home/$USERNAME
+# USER $USERNAME
 
-# Specify user to work
-USER ${USERNAME}
-WORKDIR /home/${USERNAME}
+WORKDIR /yocto
 
-# Copy all necessary files in container
-COPY .env .
 COPY layers/ layers/
-COPY scripts/*.sh scripts/
+COPY scripts/ scripts/
 
 # Start build or run in qemu
 ENTRYPOINT [ "bash", "scripts/run_yocto.sh" ]
