@@ -9,7 +9,7 @@ git clone https://github.com/yoctoproject/poky -b kirkstone
 
 # Build and run container
 docker build -t yocto .
-docker run -it --user $(id -u):$(id -g) --name yocto_cont -v $(pwd)/poky:/yocto/poky yocto COMMAND
+docker run --rm -it --user $(id -u):$(id -g) --name yocto_cont -v $(pwd)/poky:/yocto/poky yocto COMMAND
 ```
 
 ### Task 
